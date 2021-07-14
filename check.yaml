@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: check
+  labels:
+    app: check
+    service: check
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: check
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: check
+  labels:
+    app: check
+spec:
+  selector:
+    matchLabels:
+      app: check
+  template:
+    metadata:
+      labels:
+        app: check
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - image: demowusacrdt12.azurecr.io/testapplication:hello
+        imagePullPolicy: IfNotPresent
+        name: check
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 150Mi
+        ports:
+        - containerPort: 80
